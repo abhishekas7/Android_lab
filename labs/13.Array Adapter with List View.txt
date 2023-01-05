@@ -1,0 +1,68 @@
+Activity_main.xml
+*********************
+
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+<ListView
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:id="@+id/studlist"/>
+</FrameLayout>
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:orientation="horizontal"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+<ImageView
+android:id="@+id/list_icon"
+android:layout_width="65dp"
+android:layout_height="65dp"
+android:layout_margin="5dp" />
+<TextView
+android:id="@+id/list_title"
+android:layout_width="match_parent"
+android:layout_height="65dp"
+android:layout_margin="5dp" />
+</LinearLayout>
+
+MainActivity.java
+***********************
+
+package com.example.program10;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import java.util.ArrayList;
+import java.util.HashMap;
+public class MainActivity extends AppCompatActivity {
+ListView studlist;
+String[] studnames = {"alan","binu","albin","amil","devis","febin"};
+int[] studicons =
+{R.drawable.img1,R.drawable.img2,R.drawable.img3,R.drawable.img4,R.drawable.img5,R.dra
+wable.img6};
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+studlist = findViewById(R.id.studlist);
+ArrayList<HashMap<String, Object>> arrayList= new ArrayList<>();
+for (int i=0; i < studnames.length; i++){
+HashMap<String,Object> map = new HashMap<>();
+map.put("studnames",studnames[i]);
+map.put("studicons",studicons[i]);
+arrayList.add(map);
+}
+String[] from ={"studnames","studicons"};
+int to[] ={R.id.list_title,R.id.list_icon};
+SimpleAdapter adapter= new SimpleAdapter(this,arrayList, R.layout.listitem,from, to);
+studlist.setAdapter(adapter);
+}
+}

@@ -1,0 +1,61 @@
+Activity_main.xml
+**************************
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+tools:context=".MainActivity">
+<EditText
+android:id="@+id/first"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:ems="10"
+android:hint="enter first value" />
+<EditText
+android:id="@+id/second"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:ems="10"
+android:hint="enter second value" />
+<Button
+android:id="@+id/btn"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="Button" />
+</LinearLayout>
+
+MainActivity.java
+***********************
+
+package com.example.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity {
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+EditText et1 = (EditText)findViewById(R.id.first);
+EditText et2 = (EditText)findViewById(R.id.second);
+Button butt = (Button) findViewById(R.id.btn);
+butt.setOnClickListener(view -> {
+int x = Integer.parseInt(et1.getText().toString());
+int y = Integer.parseInt(et2.getText().toString());
+try{
+int c = x / y;
+Toast.makeText(getApplicationContext(), "result :"+c,
+Toast.LENGTH_SHORT).show();
+}catch (Exception e){
+Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+}
+});
+}
+}

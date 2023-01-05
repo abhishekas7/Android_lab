@@ -1,0 +1,80 @@
+Activity_main.xml
+******************
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/my_drawer_layout"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity"
+tools:ignore="HardcodedText">
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+<TextView
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginTop="128dp"
+android:gravity="center"
+android:text="Welcome to ajce"
+android:textSize="18sp" />
+</LinearLayout>
+<com.google.android.material.navigation.NavigationView
+android:layout_width="wrap_content"
+android:layout_height="match_parent"
+android:layout_gravity="start"
+app:menu="@menu/navigation_menu" />
+</androidx.drawerlayout.widget.DrawerLayout>
+
+Navigation_menu.xml
+************************
+
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+tools:ignore="HardcodedText">
+<item
+android:id="@+id/nav_account"
+android:title="My Account" />
+<item
+android:id="@+id/nav_settings"
+android:title="Settings" />
+<item
+android:id="@+id/nav_logout"
+android:title="Logout" />
+</menu>
+
+MainActivity.java
+************************
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import android.os.Bundle;
+import android.view.MenuItem;
+public class MainActivity extends AppCompatActivity {
+public DrawerLayout drawerLayout;
+public ActionBarDrawerToggle actionBarDrawerToggle;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+drawerLayout = findViewById(R.id.my_drawer_layout);
+actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+R.string.nav_open, R.string.nav_close);
+drawerLayout.addDrawerListener(actionBarDrawerToggle);
+actionBarDrawerToggle.syncState();
+getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+}
+@Override
+public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+return true;
+}
+return super.onOptionsItemSelected(item);
+}
+}

@@ -1,0 +1,260 @@
+database sqlite
+****************
+
+xml
+------
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/texttitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Please enter the details below"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"/>
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:textSize="24dp"
+        android:layout_below="@+id/texttitle"
+        android:inputType="textPersonName"/>
+    <EditText
+        android:id="@+id/contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Contact"
+        android:textSize="24dp"
+        android:layout_below="@+id/name"
+        android:inputType="number"/>
+    <EditText
+        android:id="@+id/dob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Date of Birth"
+        android:textSize="24dp"
+        android:layout_below="@+id/contact"
+        android:inputType="number"/>
+    <Button
+        android:id="@+id/btnInsert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:text="Insert New Data"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/dob"/>
+    <Button
+        android:id="@+id/btnUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:text="Update Data"
+        android:layout_below="@id/btnInsert"/>
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:text="Delete Existing Data"
+        android:layout_below="@id/btnUpdate"/>
+    <Button
+        android:id="@+id/btnView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:text="View Data"
+        android:layout_below="@id/btnDelete"/>
+</RelativeLayout>
+
+
+main.java
+---------
+
+package com.example.database;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.database.Cursor;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+EditText name, contact, dob;
+Button insert, update, delete, view;
+DBHelper db;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        name=findViewById(R.id.name);
+        contact=findViewById(R.id.contact);
+        dob=findViewById(R.id.dob);
+        insert=findViewById(R.id.btnInsert);
+        update=findViewById(R.id.btnUpdate);
+        delete=findViewById(R.id.btnDelete);
+        view=findViewById(R.id.btnView);
+        db=new DBHelper(this);
+
+        insert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nametxt = name.getText().toString();
+                String contacttxt = contact.getText().toString();
+                String dobtxt = dob.getText().toString();
+
+                Boolean checkinsertdata = db.insertuserdate(nametxt,contacttxt,dobtxt);
+                if (checkinsertdata==true){
+                    Toast.makeText(MainActivity.this, "New entry inserted", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "New entry not inserted", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nametxt = name.getText().toString();
+                String contacttxt = contact.getText().toString();
+                String dobtxt = dob.getText().toString();
+
+                Boolean checkupdatedata = db.updateuserdate(nametxt,contacttxt,dobtxt);
+                if (checkupdatedata==true){
+                    Toast.makeText(MainActivity.this, "New entry updated", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "New entry not updated", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nametxt = name.getText().toString();
+                String contacttxt = contact.getText().toString();
+                String dobtxt = dob.getText().toString();
+
+                Boolean checkdeletedata = db.deleteuserdate(nametxt,contacttxt,dobtxt);
+                if (checkdeletedata==true){
+                    Toast.makeText(MainActivity.this, "New entry deleted", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "New entry not deleted", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Cursor res=db.getdata();
+                if(res.getCount()==0)
+                {
+                    Toast.makeText(MainActivity.this, "No entries", Toast.LENGTH_SHORT).show();
+                }
+                StringBuffer bu=new StringBuffer();
+                while(res.moveToNext()){
+                    bu.append("Name : "+res.getString(0)+"\n");
+                    bu.append("Contact : "+res.getString(1)+"\n");
+                    bu.append("Date of birth : "+res.getString(2)+"\n\n");
+                }
+                AlertDialog.Builder bui=new AlertDialog.Builder(MainActivity.this);
+                bui.setMessage(bu.toString());
+                bui.show();
+            }
+        });
+    }
+}
+
+
+DBHelper.java
+-----------------
+
+
+package com.example.database;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import androidx.annotation.Nullable;
+public class DBHelper extends SQLiteOpenHelper {
+    public DBHelper(@Nullable Context context) {
+        super(context, "userdata.db", null, 1);
+    }
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("create table userdetails(name TEXT primary key, contact TEXT, dob TEXT)");
+    }
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("drop table if exists userdwtails");
+    }
+    public Boolean insertuserdate(String name, String contact, String dob)
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues c=new ContentValues();
+        c.put("name",name);
+        c.put("contact",contact);
+        c.put("dob",dob);
+        long result=db.insert("userdetails",null,c);
+    if(result==-1) {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+    }
+    public Boolean updateuserdate(String name, String contact, String dob)
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues c=new ContentValues();
+        c.put("contact",contact);
+        c.put("dob",dob);
+        Cursor cu=db.rawQuery("Select * from userdetails where name = ?" , new String[]{name});
+       if (cu.getCount()>0)
+       {
+           long result = db.update("userdetails", c, "name = ?", new String[]{name});
+           if (result == -1) {
+               return false;
+           } else{
+               return true;
+           }
+       } else{
+           return false;
+       }
+    }
+    public Boolean deleteuserdate(String name, String contact, String dob) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cu = db.rawQuery("Select * from userdetails where name = ?", new String[]{name});
+        if (cu.getCount() > 0) {
+            long result = db.delete("userdetails", "name = ?", new String[]{name});
+            if (result == -1) {
+                return false;
+            } else {
+                return true;
+            }
+        }else{
+            return false;
+        }
+        }
+    public Cursor getdata()
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor cu=db.rawQuery("select * from userdetails",null);
+        return cu;
+    }
+  }
+
